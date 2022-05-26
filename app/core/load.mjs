@@ -11,11 +11,6 @@ import fs from 'fs'
 const mk = new Marker()
 
 export default class Load {
-    async _alertNote (pathname) {
-        clg('Note added to queue!', 'success')
-        console.log(`> ${pathname}\n`.gray)
-    }
-
     async _add (pathname) {
         const filter = {
             company: this._company,
@@ -24,37 +19,31 @@ export default class Load {
 
         const nfe = await outstandingNfes.findOne(filter)
 
-        if (nfe.length) {
-            const document = {
-                company: this._company,
-                pathname,
-                updateAt: new Date().toJSON(),
-                active: true
-            }
-
-            const updDoc = await outstandingNfes.updateOne(filter, document)
-            if (updDoc.update) await this._alertNote(document.pathname)
-        } else {
+        if (!nfe.length) {
             const document = {
                 company: this._company,
                 pathname,
                 createAt: new Date().toJSON(),
                 updateAt: '',
+                period: `${this._year}/${this._month}`,
                 active: true
             }
 
             const createNewDoc = await outstandingNfes.createOne(document)
-            if (createNewDoc.create) await this._alertNote(document.pathname)
+            if (createNewDoc.create) {
+                clg('Note added to queue!', 'success')
+                console.log(`> ${pathname}\n`.gray)
+            }
         }
     }
 
-    async _file (pathname) {
+    async _processfile (pathname) {
         const files = fs.readdirSync(pathname, { withFileTypes: true })
 
         for await (const file of files) {
             if (file.isDirectory()) {
                 setTimeout(async () => {
-                    await this._file(path.join(pathname, file.name))
+                    await this._processfile(path.join(pathname, file.name))
                 }, 500)
             } else if (file.isFile()) {
                 if (
@@ -89,7 +78,7 @@ export default class Load {
         return true
     }
 
-    async _month (pathname) {
+    async _processMonth (pathname) {
         const files = fs.readdirSync(pathname, { withFileTypes: true })
 
         for await (const file of files) {
@@ -100,7 +89,10 @@ export default class Load {
                     access = this._checkMonth(file.name)
                 }
 
-                if (access) await this._file(path.join(pathname, file.name))
+                if (access) {
+                    this._month = file.name
+                    await this._processfile(path.join(pathname, file.name))
+                }
             }
         }
     }
@@ -109,7 +101,7 @@ export default class Load {
         return this._filters.yearStart <= y && y <= this._filters.yearEnd
     }
 
-    async _year (pathname) {
+    async _processYear (pathname) {
         const files = fs.readdirSync(pathname, { withFileTypes: true })
 
         for await (const file of files) {
@@ -120,7 +112,10 @@ export default class Load {
                     access = this._checkPeriod(file.name)
                 }
 
-                if (access) await this._month(path.join(pathname, file.name))
+                if (access) {
+                    this._year = file.name
+                    await this._processMonth(path.join(pathname, file.name))
+                }
             }
         }
     }
@@ -147,7 +142,7 @@ export default class Load {
                     if (!isCompany) access = false
                 }
 
-                if (access) await this._year(path.join(pathname, file.name))
+                if (access) await this._processYear(path.join(pathname, file.name))
             }
         }
     }
