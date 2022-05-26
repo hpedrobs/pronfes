@@ -13,6 +13,9 @@ const outstandingNfes = new Schema({
     updateAt: {
         type: 'text'
     },
+    period: {
+        type: 'text'
+    },
     active: {
         type: 'boolean'
     }
