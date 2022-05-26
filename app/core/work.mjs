@@ -7,7 +7,28 @@ import clg from './clg.mjs'
 import fs from 'fs'
 
 export default class Work {
-    async exec () {
+    async _remove (id) {
+    }
 
+    async _process (nfe) {
+    }
+
+    async _inactive (id) {
+        const updateDocument = await outstandingNfes.updateOne({ id }, { active: false })
+        if (updateDocument.update) {
+            clg('inactive note', 'info')
+        } else {
+            clg('problem to inactivate the note', 'error')
+        }
+    }
+
+    async exec () {
+        const outstanding = await outstandingNfes.find({ active: true })
+
+        for await (const nfe of outstanding) {
+            clg(`process note: ${nfe.pathname}`)
+            await this._inactive(nfe.id)
+            await this._process(nfe)
+        }
     }
 }
