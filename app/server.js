@@ -30,7 +30,7 @@ import help from './utils/help.mjs'
         await processLoader.exec(args)
     } else if ('processWork' in args && args.processWork) {
         const processWork = new Work()
-        await processWork.exec(args)
+        await processWork.exec()
     } else if ('removeOutstandingNfes' in args && args.removeOutstandingNfes) {
         await dropOutstandingNfes()
     } else if (('help' in args && args.help) || ('h' in args && args.h)) {
