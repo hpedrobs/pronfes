@@ -230,7 +230,12 @@ export class Bie {
         let conditions = []
 
         for (const [key, value] of Object.entries(query)) {
-            conditions.push(`${key}=${this._checkValue(value)}`)
+            if (key === 'id') {
+                conditions.push(`${key}=${this._checkValue(value)}`)
+                break
+            } else {
+                conditions.push(`${key}=${this._checkValue(value)}`)
+            }
         }
 
         conditions = conditions.join(' AND ')
@@ -245,7 +250,7 @@ export class Bie {
 
                 if (Object.keys(query).length) {
                     for (const column of Object.keys(query)) {
-                        if (columns.indexOf(column) === -1) {
+                        if (column !== 'id' && columns.indexOf(column) === -1) {
                             throw new Error(`${column} column does not exist`)
                         }
                     }
@@ -401,6 +406,8 @@ export class Bie {
 
                 db.close()
             }
+
+            resolve({ update: false })
         })
     }
 }
