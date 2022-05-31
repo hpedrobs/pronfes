@@ -24,13 +24,13 @@ export default class Load {
                 company: this._company,
                 pathname,
                 createAt: new Date().toJSON(),
-                updateAt: '',
+                reprocess: '',
                 period: `${this._year}/${this._month}`,
                 active: true
             }
 
             const createNewDoc = await outstandingNfes.createOne(document)
-            if (createNewDoc.create) {
+            if (createNewDoc.createOne) {
                 clg('Note added to queue!', 'success')
                 console.log(`> ${pathname}\n`.gray)
             }
@@ -42,14 +42,11 @@ export default class Load {
 
         for await (const file of files) {
             if (file.isDirectory()) {
-                setTimeout(async () => {
-                    await this._processfile(path.join(pathname, file.name))
-                }, 500)
+                await this._processfile(path.join(pathname, file.name))
             } else if (file.isFile()) {
-                if (
-                    path.extname(file.name) === '.xml' ||
-                    path.extname(file.name) === '.zip'
-                ) await this._add(path.join(pathname, file.name))
+                if (path.extname(file.name) === '.xml' || path.extname(file.name) === '.zip') {
+                    await this._add(path.join(pathname, file.name))
+                }
             }
         }
     }
