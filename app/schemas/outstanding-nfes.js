@@ -10,7 +10,7 @@ const outstandingNfes = new Schema({
     createAt: {
         type: 'text'
     },
-    updateAt: {
+    reprocess: {
         type: 'text'
     },
     period: {
