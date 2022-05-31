@@ -37,7 +37,7 @@ export class Bie {
         })
     }
 
-    _checkSchema () {
+    async _checkSchema () {
         const sname = this._sname === undefined
         const sform = this._sform === undefined
         let definedProperty
@@ -63,15 +63,18 @@ export class Bie {
     _typesColumn (type) {
         let types = []
 
-        switch (type) {
-        case 'text':
+        switch (type.toUpperCase()) {
+        case 'TEXT':
             types.push('TEXT')
             break
-        case 'number':
+        case 'NUMBER':
             types.push('INT')
             break
-        case 'boolean':
+        case 'BOOLEAN':
             types.push('BLOB')
+            break
+        case 'LONGTEXT':
+            types.push('LONGTEXT')
             break
 
         default:
@@ -160,13 +163,20 @@ export class Bie {
     }
 
     _checkTable () {
-        const db = this._db()
+        return new Promise(resolve => {
+            const db = this._db()
 
-        db.run(`CREATE TABLE IF NOT EXISTS ${this._sname} ${this._query.columns}`, (error) => {
-            if (error) this._bieError(error.message)
+            db.run(`CREATE TABLE IF NOT EXISTS ${this._sname} ${this._query.columns}`, (error) => {
+                if (error) {
+                    this._bieError(error.message)
+                    resolve()
+                } else {
+                    resolve()
+                }
+            })
+
+            db.close()
         })
-
-        db.close()
     }
 
     dropTable () {
@@ -188,9 +198,13 @@ export class Bie {
         })
     }
 
+    _mapStr (s) {
+        return s.split('\'').join('')
+    }
+
     _checkValue (v) {
         if (typeof v === 'string') {
-            return `'${v}'`
+            return `'${this._mapStr(v)}'`
         } else {
             return v
         }
@@ -243,7 +257,7 @@ export class Bie {
         return conditions
     }
 
-    _checkQuery (query) {
+    async _checkQuery (query) {
         return new Promise((resolve) => {
             try {
                 const columns = Object.keys(this._sform)
@@ -266,13 +280,13 @@ export class Bie {
         })
     }
 
-    find (query = {}) {
-        return new Promise((resolve) => {
-            this._checkSchema()
+    async find (query = {}) {
+        await this._checkSchema()
 
-            if (this._newSchema) {
-                this._checkTable()
+        if (this._newSchema) {
+            await this._checkTable()
 
+            return new Promise((resolve) => {
                 const conditions = this._conditions(query)
 
                 if (conditions) {
@@ -310,17 +324,19 @@ export class Bie {
 
                     db.close()
                 }
-            }
-        })
+            })
+        } else {
+            return []
+        }
     }
 
-    findOne (query = {}) {
-        return new Promise((resolve) => {
-            this._checkSchema()
+    async findOne (query = {}) {
+        await this._checkSchema()
 
-            if (this._newSchema) {
-                this._checkTable()
+        if (this._newSchema) {
+            await this._checkTable()
 
+            return new Promise((resolve) => {
                 const conditions = this._conditions(query)
 
                 const db = this._db()
@@ -339,17 +355,19 @@ export class Bie {
                 })
 
                 db.close()
-            }
-        })
+            })
+        } else {
+            return []
+        }
     }
 
-    createOne (document) {
-        return new Promise(resolve => {
-            this._checkSchema()
+    async createOne (document = {}) {
+        await this._checkSchema()
 
-            if (this._newSchema) {
-                this._checkTable()
+        if (this._newSchema) {
+            await this._checkTable()
 
+            return new Promise(resolve => {
                 const db = this._db()
 
                 db.serialize(() => {
@@ -361,30 +379,31 @@ export class Bie {
                         db.run(sql, (error) => {
                             if (error) {
                                 this._bieError(error.message)
-                                resolve({ create: false })
+                                resolve({ createOne: false })
                             } else {
-                                resolve({ create: true })
+                                resolve({ createOne: true })
                             }
                         })
                     }
                 })
 
                 db.close()
-            }
-        })
+            })
+        } else {
+            return { createOne: false }
+        }
     }
 
-    updateOne (query = {}, document = {}) {
-        return new Promise(resolve => {
-            this._checkSchema()
+    async updateOne (query = {}, document = {}) {
+        await this._checkSchema()
 
-            if (
-                this._newSchema &&
-                this._checkQuery(query) &&
-                this._checkQuery(document)
-            ) {
-                this._checkTable()
+        const isQuery = await this._checkQuery(query)
+        const isDocument = await this._checkQuery(document)
 
+        if (this._newSchema && isQuery && isDocument) {
+            await this._checkTable()
+
+            return new Promise(resolve => {
                 const conditions = this._conditions(query)
 
                 const values = this._mapDocument(document)
@@ -394,20 +413,51 @@ export class Bie {
                 const db = this._db()
 
                 db.serialize(() => {
-                    db.run(sql, (error, rows) => {
+                    db.run(sql, (error) => {
                         if (error) {
                             this._bieError(error)
-                            resolve({ update: false })
+                            resolve({ updateOne: false })
+                        } else {
+                            resolve({ updateOne: true })
                         }
-
-                        resolve({ update: true })
                     })
                 })
 
                 db.close()
-            }
+            })
+        } else {
+            return { updateOne: false }
+        }
+    }
 
-            resolve({ update: false })
-        })
+    async deleteOne (query = {}) {
+        await this._checkSchema()
+
+        if (this._newSchema) {
+            await this._checkTable()
+
+            return new Promise(resolve => {
+                const conditions = this._conditions(query)
+
+                const sql = `DELETE FROM ${this._sname} WHERE ${conditions}`
+
+                const db = this._db()
+
+                db.serialize(() => {
+                    db.run(sql, (error) => {
+                        if (error) {
+                            this._bieError(error)
+                            resolve({ deleteOne: false })
+                        } else {
+                            resolve({ deleteOne: true })
+                        }
+                    })
+                })
+
+                db.close()
+            })
+        } else {
+            return { updateOne: false }
+        }
     }
 }
