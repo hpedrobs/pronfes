@@ -10,5 +10,5 @@ export default () => {
     console.log('--yearEnd=number                 year to finish')
     console.log('--monthEnd=number                month to finish')
     console.log('--months=number                  Set previous month')
-    console.log('--processWork                    ')
+    console.log('--processWork                    Process XML from the queue')
 }
