@@ -11,4 +11,5 @@ export default () => {
     console.log('--monthEnd=number                month to finish')
     console.log('--months=number                  Set previous month')
     console.log('--processWork                    Process XML from the queue')
+    console.log('--removeOutstandingNfes          Remove drop-down list')
 }
