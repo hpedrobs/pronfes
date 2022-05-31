@@ -67,6 +67,18 @@ export default class Work {
         }
     }
 
+    async _reprocess (company, pathname) {
+        const updateDocument = await outstandingNfes.updateOne({ company, pathname }, {
+            reprocess: new Date().toJSON()
+        })
+
+        if (updateDocument.updateOne) {
+            clg('Reprocess the note', 'success')
+        } else {
+            clg('failed to reprocess the note', 'error')
+        }
+    }
+
     async _process (nfe) {
         return new Promise((resolve) => {
             const params = [
