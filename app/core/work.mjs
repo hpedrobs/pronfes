@@ -6,6 +6,7 @@ import clg from './clg.mjs'
 
 /* Core Module */
 import { spawn } from 'node:child_process'
+import('dotenv/config')
 
 export default class Work {
     async _fieldActive (id, value) {
@@ -91,7 +92,7 @@ export default class Work {
             const nfepy = spawn('python3', params, {
                 windowsHide: true,
                 shell: true,
-                cwd: './nfe'
+                cwd: process.env.CWD
             })
 
             nfepy.stdout.setEncoding('utf8')
