@@ -46,7 +46,7 @@ export default class Work {
     }
 
     async _createProcess (document) {
-        if (this._existProcess(document.company, document.pathname)) {
+        if (await this._existProcess(document.company, document.pathname)) {
             const updateDocument = await processedNfes.updateOne({
                 company: document.company,
                 pathname: document.pathname
@@ -88,7 +88,7 @@ export default class Work {
                 '-foldered'
             ]
 
-            const nfepy = spawn('python', params, {
+            const nfepy = spawn('python3', params, {
                 windowsHide: true,
                 shell: true,
                 cwd: './nfe'
@@ -118,14 +118,14 @@ export default class Work {
                     })
                     await this._fieldActive(nfe.id, true)
                 } else {
-                    this._createProcess({
+                    await this._createProcess({
                         company: nfe.company,
                         pathname: nfe.pathname,
                         createAt: new Date().toJSON(),
                         updateAt: '',
                         period: nfe.period
                     })
-                    this._remove(nfe._id)
+                    await this._remove(nfe.id)
                 }
                 resolve()
             })
