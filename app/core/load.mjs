@@ -150,5 +150,7 @@ export default class Load {
         const xmls = await xmlpaths.find({})
 
         for await (const xml of xmls) await this._company(xml.pathname)
+
+        // setTimeout(async () => await this.exec(args), 30000)
     }
 }
