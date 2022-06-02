@@ -141,5 +141,7 @@ export default class Work {
             await this._fieldActive(nfe.id, false)
             await this._process(nfe)
         }
+
+        setTimeout(() => this.exec(), 30000)
     }
 }
