@@ -6,7 +6,15 @@ import clg from './clg.mjs'
 
 /* Core Module */
 import { spawn } from 'node:child_process'
-import('dotenv/config')
+import { config } from 'dotenv'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+config({
+    path: path.join(__dirname, '../../.env')
+})
 
 export default class Work {
     async _fieldActive (id, value) {
@@ -92,7 +100,7 @@ export default class Work {
             const nfepy = spawn('python3', params, {
                 windowsHide: true,
                 shell: true,
-                cwd: process.env.CWD
+                cwd: process.env.PATHNFE
             })
 
             nfepy.stdout.setEncoding('utf8')

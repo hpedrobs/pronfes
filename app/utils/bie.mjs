@@ -1,6 +1,13 @@
 import sqlite3 from 'sqlite3'
-import dotenv from 'dotenv'
-dotenv.config()
+import { config } from 'dotenv'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+config({
+    path: path.join(__dirname, '../../.env')
+})
 
 export class Schema {
     constructor (form) {
@@ -150,13 +157,10 @@ export class Bie {
 
     _db () {
         try {
-            if (process.env.SQLITE_FILENAME) {
-                return new sqlite3.Database(process.env.SQLITE_FILENAME, (error) => {
-                    if (error) console.log(error)
-                })
-            } else {
-                throw new Error('Database path name is incorrect or not defined!')
-            }
+            const filename = process.env.SQLITE_FILENAME ? process.env.SQLITE_FILENAME : path.resolve(__dirname, '../../database/nfe.sqlite')
+            return new sqlite3.Database(filename, (error) => {
+                if (error) console.log(error)
+            })
         } catch (error) {
             console.log(error)
         }
