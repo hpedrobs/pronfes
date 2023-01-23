@@ -21,7 +21,7 @@ export class Work {
             if (process.env.CWD) {
                 const params = []
 
-                params.push("test.py")
+                params.push("nfe.py")
                 params.push("-foldered")
                 params.push("-empresa=" + nfe.company)
                 params.push(path.resolve(nfe.filepath))
