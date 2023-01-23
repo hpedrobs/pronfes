@@ -22,6 +22,8 @@ export class Work {
                 const params = []
 
                 params.push("test.py")
+                params.push("-foldered")
+                params.push("-empresa=" + nfe.company)
                 params.push(path.resolve(nfe.filepath))
 
                 const pro = spawn("python3", params, {
