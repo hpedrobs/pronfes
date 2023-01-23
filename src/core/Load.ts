@@ -159,6 +159,6 @@ export default class Load {
         setTimeout(async () => {
             const load = new Load()
             await load.exec(args)
-        }, 30000)
+        }, 600000)
     }
 }
