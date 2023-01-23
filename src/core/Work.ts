@@ -125,7 +125,6 @@ export class Work {
 
     async exec() : Promise<void> {
         const pendings = await Pending.find({ active: false }).sort({ updatedAt: 1 })
-        console.log(pendings.length)
 
         for await (const nfe of pendings) {
             await this._active(nfe._id, true)
