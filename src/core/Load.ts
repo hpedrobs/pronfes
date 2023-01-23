@@ -89,7 +89,6 @@ export default class Load {
                     access = this._checkMonth(parseInt(file.name))
                 }
 
-                console.log(access)
                 if (access) {
                     this._month = parseInt(file.name)
                     await this._processfile(path.join(pathname, file.name))
