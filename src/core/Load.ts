@@ -1,7 +1,7 @@
 // /* Internal */
 import maker from "../utils/marker";
 import Root, { IRoot } from "../schemas/Root"
-import Pending from "../schemas/Pending";
+import Pending, { IPending } from "../schemas/Pending";
 
 /* Core Module */
 import path from 'path'
@@ -14,13 +14,28 @@ export interface IFilters {
     monthStart: number;
     yearEnd: number;
     monthEnd: number;
+    loop: boolean;
 }
 
 export default class Load {
-    _filters!: IFilters;
-    _code!: number;
-    _year!: number;
-    _month!: number;
+    _filters: IFilters;
+    _code: number;
+    _year: number;
+    _month: number;
+
+    constructor () {
+        this._filters = {
+            company: String(),
+            yearStart: Number(),
+            monthStart: Number(),
+            yearEnd: Number(),
+            monthEnd: Number(),
+            loop: Boolean()
+        }
+        this._code = Number()
+        this._year = Number()
+        this._month = Number()
+    }
 
     async _add (filepath:string) {
         const filter = {
@@ -36,11 +51,11 @@ export default class Load {
             })
 
             newPending.save()
-                .then(result => {
+                .then((result: IPending) => {
                     console.log("Nota inserida com sucesso!")
                     console.log("Nota: ", result.filepath)
                 })
-                .catch(err => console.error(err))
+                .catch((err: any) => console.error(err))
         }
     }
 
@@ -108,7 +123,7 @@ export default class Load {
             if (file.isDirectory()) {
                 let access = true
 
-                if (this._filters.yearStart && this._filters.yearEnd) {
+                if (Boolean(this._filters.yearStart) && Boolean(this._filters.yearEnd)) {
                     access = this._checkPeriod(parseInt(file.name))
                 }
 
@@ -156,9 +171,11 @@ export default class Load {
 
         for (const root of roots) await this._company(root.pathname)
 
-        setTimeout(async () => {
-            const load = new Load()
-            await load.exec(args)
-        }, 600000)
+        if (args.loop) {
+            setTimeout(async () => {
+                const load = new Load()
+                await load.exec(args)
+            }, 600000)
+        }
     }
 }

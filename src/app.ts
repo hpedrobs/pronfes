@@ -17,11 +17,12 @@ import { Work } from "./core/Work"
         const loader = new Load()
 
         const attrs : IFilters = {
-            company: '',
-            yearStart: 0,
-            monthStart: 0,
-            yearEnd: 0,
-            monthEnd: 0
+            company: String(),
+            yearStart: Number(),
+            monthStart: Number(),
+            yearEnd: Number(),
+            monthEnd: Number(),
+            loop: Boolean()
         }
 
         if ('period' in args && args.period) {
@@ -31,8 +32,8 @@ import { Work } from "./core/Work"
                 attrs[idx === 0 ? 'monthStart' : 'monthEnd'] = parseInt(p.substring(5, 7))
             })
         }
-
         if ('company' in args && args.company) attrs['company'] = args.company
+        if ('loop' in args && args.loop) attrs['loop'] = args.loop
 
         loader.exec(attrs)
     } else if ('work' in args && args.work) {
