@@ -8,4 +8,5 @@ export default () : void => {
     console.log('   --period=string                 Filtra pelo perído inicial e final. Exemplos de uso: "2022/12-2022/01"')
     // console.log('   --deletePendings                Deletear todas as notas pendentes')
     console.log('   --work                          Processa os xmls da lista de arquivos')
+    process.exit(9)
 }
