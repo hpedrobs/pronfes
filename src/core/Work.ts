@@ -12,7 +12,7 @@ dotenv.config({ path: path.join(__dirname, "../../.env") })
 export class Work {
     _miss: Array<string>
 
-    constructor () {
+    constructor() {
         this._miss = new Array(0)
     }
 
@@ -36,7 +36,7 @@ export class Work {
                     data = data.toString()
                     console.log(data)
                 })
-                
+
                 pro.stderr.on('data', data => {
                     data = data.toString()
                     this._miss.push(data)
@@ -51,7 +51,7 @@ export class Work {
                             log: new Error(this._miss.join("")),
                             type: "error"
                         })
-        
+
                         log.save()
                             .then(async res => {
                                 await this._active(nfe._id, false)
@@ -65,7 +65,7 @@ export class Work {
                         Pending.findByIdAndDelete({ _id: nfe._id })
                             .then(res => {
                                 console.log("Nota processada com sucesso!")
-                                
+
                                 Hist.updateOne({ company: res?.company, filepath: res?.filepath, period: res?.period }, {
                                     company: res?.company,
                                     filepath: res?.filepath,
@@ -125,8 +125,13 @@ export class Work {
         })
     }
 
-    async exec() : Promise<void> {
-        const pendings = await Pending.find({ active: false }).sort({ updatedAt: 1 })
+    async exec(): Promise<void> {
+
+        const pendings = await Pending.aggregate([
+            { $sort: { updatedAt: 1 } }
+        ],
+            { allowDiskUse: true }
+        )
 
         for await (const nfe of pendings) {
             await this._active(nfe._id, true)
@@ -134,7 +139,7 @@ export class Work {
         }
 
         setTimeout(() => {
-            if (mongoose.connection.readyState === 1)  {
+            if (mongoose.connection.readyState === 1) {
                 this.exec()
             } else {
                 throw new Error("Falha na conexão com o banco de dados")
