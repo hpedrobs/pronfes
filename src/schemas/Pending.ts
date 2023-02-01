@@ -6,6 +6,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/nfe')
 
 export interface IPending extends Document {
     company: number;
+    company_name: string;
     filepath: string;
     period: string;
     active: boolean;
@@ -13,6 +14,7 @@ export interface IPending extends Document {
 
 const pendingSchema = new Schema<IPending>({
     company: { type: Number, required: true },
+    company_name: { type: String, required: false },
     filepath: { type: String, required: true },
     period: { type: String, required: true },
     active: { type: Boolean, required: true, default: false },

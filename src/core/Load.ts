@@ -22,6 +22,7 @@ export default class Load {
     _code: number;
     _year: number;
     _month: number;
+    _company_name: string;
 
     constructor () {
         this._filters = {
@@ -35,6 +36,7 @@ export default class Load {
         this._code = Number()
         this._year = Number()
         this._month = Number()
+        this._company_name = String()
     }
 
     async _add (filepath:string) {
@@ -46,6 +48,7 @@ export default class Load {
         if (!Boolean(await Pending.exists(filter))) {
             const newPending = new Pending({
                 company: this._code,
+                company_name: this._company_name,
                 filepath,
                 period: `${this._year}/${this._month}`
             })
@@ -159,7 +162,10 @@ export default class Load {
                     if (!isCompany) access = false
                 }
 
-                if (access) await this._processYear(path.join(pathname, file.name))
+                if (access) {
+                    this._company_name = file.name
+                    await this._processYear(path.join(pathname, file.name))
+                }
             }
         }
     }
