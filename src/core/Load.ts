@@ -2,6 +2,7 @@
 import maker from "../utils/marker";
 import Root, { IRoot } from "../schemas/Root"
 import Pending, { IPending } from "../schemas/Pending";
+import Obsolete, { IObsolete } from "../schemas/Obsolete";
 
 /* Core Module */
 import path from 'path'
@@ -159,6 +160,8 @@ export default class Load {
                     if (!isCompany) access = false
                 }
 
+                if (await Obsolete.count({ company: this._code })) access = false
+                
                 if (access) await this._processYear(path.join(pathname, file.name))
             }
         }
