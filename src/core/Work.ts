@@ -127,7 +127,7 @@ export class Work {
 
     async exec(): Promise<void> {
         const pendings = await Pending.aggregate([
-            { $sort: { updatedAt: 1, company_name: 1 } }
+            { $sort: { createdAt: 1, company_name: 1 } }
         ],
             { allowDiskUse: true }
         )
