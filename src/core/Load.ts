@@ -140,10 +140,11 @@ export default class Load {
         }
     }
 
-    async _setCodeCompany (comp:string) {
+    _setCompany (comp:string) {
         const parts = comp.split('-')
 
         if (parts.length === 2) {
+            this._company_name = parts[0]
             this._code = parseInt(parts[1])
         }
     }
@@ -153,7 +154,7 @@ export default class Load {
 
         for await (const file of files) {
             if (file.isDirectory()) {
-                this._setCodeCompany(file.name)
+                this._setCompany(file.name)
 
                 let access = true
 
