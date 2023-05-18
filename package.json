@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
-    "serve": "tsnd --respawn --transpile-only ./src/app.ts",
-    "start": "node ./dist/app.js"
+    "dev": "tsnd --respawn --transpile-only ./src/app.ts",
+    "start": "node ./dist/app.js",
+    "config:env": "tsnd --respawn --transpile-only ./src/config/env.ts"
   },
   "keywords": [],
   "author": "",
