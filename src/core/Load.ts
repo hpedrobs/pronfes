@@ -2,6 +2,7 @@
 import maker from "../utils/marker";
 import Root, { IRoot } from "../schemas/Root"
 import Pending, { IPending } from "../schemas/Pending";
+import Hist from "../schemas/Hist";
 import Obsolete, { IObsolete } from "../schemas/Obsolete";
 
 /* Core Module */
@@ -46,7 +47,7 @@ export default class Load {
             filepath
         }
 
-        if (!Boolean(await Pending.exists(filter))) {
+        if (!Boolean(await Pending.exists(filter)) && !Boolean(await Hist.exists(filter))) {
             const newPending = new Pending({
                 company: this._code,
                 company_name: this._company_name,
