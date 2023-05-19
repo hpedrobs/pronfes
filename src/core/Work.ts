@@ -9,11 +9,37 @@ import mongoose from "mongoose"
 
 dotenv.config({ path: path.join(__dirname, "../../.env") })
 
+export interface IFilters {
+    company: string;
+    yearStart: number;
+    monthStart: number;
+    yearEnd: number;
+    monthEnd: number;
+    loop: boolean;
+}
+
 export class Work {
+    _filters: IFilters;
+    _code: number;
+    _year: number;
+    _month: number;
+    _company_name: string;
     _miss: Array<string>
 
     constructor() {
         this._miss = new Array(0)
+        this._filters = {
+            company: String(),
+            yearStart: Number(),
+            monthStart: Number(),
+            yearEnd: Number(),
+            monthEnd: Number(),
+            loop: Boolean()
+        }
+        this._code = Number()
+        this._year = Number()
+        this._month = Number()
+        this._company_name = String()
     }
 
     _process(nfe: IPending): Promise<void> {
@@ -125,12 +151,13 @@ export class Work {
         })
     }
 
-    async exec(): Promise<void> {
-        const pendings = await Pending.aggregate([
-            { $sort: { createdAt: 1, company_name: 1 } }
-        ],
-            { allowDiskUse: true }
-        )
+    async exec(attrs: IFilters): Promise<void> {
+        const pipeline: any = [{ '$sort': { 'createdAt': 1, 'company_name': 1 } }]
+
+        if (attrs.yearStart && attrs.monthStart && attrs.yearEnd && attrs.monthEnd) {
+            pipeline.push({ '$match': { 'period': { '$gte': `${attrs.yearStart}/${attrs.monthStart}`, '$lte': `${attrs.yearEnd}/${attrs.monthEnd}` } } })
+        }
+        const pendings = await Pending.aggregate(pipeline, { allowDiskUse: true })
 
         for await (const nfe of pendings) {
             await this._active(nfe._id, true)
@@ -139,7 +166,7 @@ export class Work {
 
         setTimeout(() => {
             if (mongoose.connection.readyState === 1) {
-                this.exec()
+                this.exec(attrs)
             } else {
                 throw new Error("Falha na conexão com o banco de dados")
             }
