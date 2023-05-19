@@ -38,7 +38,27 @@ import { Work } from "./core/Work"
         loader.exec(attrs)
     } else if ('work' in args && args.work) {
         const work = new Work()
-        work.exec()
+
+        const attrs : IFilters = {
+            company: String(),
+            yearStart: Number(),
+            monthStart: Number(),
+            yearEnd: Number(),
+            monthEnd: Number(),
+            loop: Boolean()
+        }
+
+        if ('period' in args && args.period) {
+            const periods = args.period.split("-")
+            periods.forEach((p: String, idx: Number) => {
+                attrs[idx === 0 ? 'yearStart' : 'yearEnd'] = parseInt(p.substring(0, 4))
+                attrs[idx === 0 ? 'monthStart' : 'monthEnd'] = parseInt(p.substring(5, 7))
+            })
+        }
+
+        if ('company' in args && args.company) attrs['company'] = args.company
+
+        work.exec(attrs)
     } else if (('help' in args && args.help) || ('h' in args && args.h)) {
         help()
     }
