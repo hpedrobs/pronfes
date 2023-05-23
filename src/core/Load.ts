@@ -78,12 +78,13 @@ export default class Load {
         }
     }
 
-    _isMonth (month:number) {
-        if (isNaN(month)) month = 0
+    _isMonth (month:number | any) {
+        // if (isNaN(month)) month = 0
         return month >= 1 && month <= 12
     }
 
-    _checkMonth (month:number) {
+    _checkMonth (name:string) {
+        const month = parseInt(name) || 0
         if (
             !this._isMonth(month) &&
             !this._isMonth(this._filters.monthStart) &&
@@ -106,7 +107,7 @@ export default class Load {
                 let access = true
 
                 if (this._filters.monthStart || this._filters.monthEnd) {
-                    access = this._checkMonth(parseInt(file.name))
+                    access = this._checkMonth(file.name)
                 }
 
                 if (access) {
