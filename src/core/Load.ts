@@ -78,8 +78,7 @@ export default class Load {
         }
     }
 
-    _isMonth (month:number | any) {
-        // if (isNaN(month)) month = 0
+    _isMonth (month:number) {
         return month >= 1 && month <= 12
     }
 
@@ -144,7 +143,7 @@ export default class Load {
 
     _setCompany (comp:string) {
         const parts = comp.split('-')
-
+        
         if (parts.length === 2) {
             this._company_name = parts[0]
             this._code = parseInt(parts[1])
@@ -166,9 +165,11 @@ export default class Load {
                     if (!isCompany) access = false
                 }
 
-                if (await Obsolete.count({ company: this._code })) access = false
-                
-                if (access) await this._processYear(path.join(pathname, file.name))
+                if (!isNaN(this._code)) {
+                    if (await Obsolete.count({ company: this._code })) access = false
+                    
+                    if (access) await this._processYear(path.join(pathname, file.name))
+                }
             }
         }
     }
