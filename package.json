@@ -7,6 +7,7 @@
     "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
     "dev": "tsnd --respawn --transpile-only ./src/app.ts",
     "dev:work": "tsnd --respawn --transpile-only ./src/app.ts --work",
+    "dev:loader": "tsnd --respawn --transpile-only ./src/app.ts --loader --period=\"2023/01-2023/12\" --company=\"%- 137\"",
     "start": "node ./dist/app.js",
     "config:env": "tsnd --respawn --transpile-only ./src/config/env.ts"
   },
