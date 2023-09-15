@@ -3,7 +3,7 @@ import { join } from "path"
 
 config({ path: join(__dirname, "../../.env") })
 
-if (!('MONGO_URL' in process.env)) process.env.MONGO_URL = "mongodb://localhost"
+if (!('MONGO_URL' in process.env)) process.env.MONGO_URL = "mongodb://127.0.0.1"
 else if (!('MONGO_PORT' in process.env)) process.env.MONGO_PORT = "27017"
 else if (!('MONGO_DB' in process.env)) process.env.MONGO_DB = "nfe"
 

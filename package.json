@@ -7,8 +7,10 @@
     "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
     "dev": "tsnd --respawn --transpile-only ./src/app.ts",
     "dev:work": "tsnd --respawn --transpile-only ./src/app.ts --work",
+    "dev:get-pending": "tsnd --respawn --transpile-only ./src/app.ts --getPending",
     "start": "node ./dist/app.js",
-    "config:env": "tsnd --respawn --transpile-only ./src/config/env.ts"
+    "config:env": "tsnd --respawn --transpile-only ./src/config/env.ts",
+    "tools:inactivate-company": "tsnd --respawn --transpile-only ./src/tools/inactivateCompany.ts"
   },
   "keywords": [],
   "author": "",

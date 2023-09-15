@@ -3,6 +3,7 @@ import minimist from "minimist"
 import { insertRootDir, showListRoots, deleteRootDir } from "./services/rootDir"
 import Load, { IFilters } from "./core/Load"
 import { Work } from "./core/Work"
+import getPendingCompanies from "./services/getPendingCompanies"
 
 (async function () {
     const args = minimist(process.argv.slice(2))
@@ -59,6 +60,8 @@ import { Work } from "./core/Work"
         if ('company' in args && args.company) attrs['company'] = args.company
 
         work.exec(attrs)
+    } else if ('getPending' in args && args.getPending) {
+        await getPendingCompanies()
     } else if (('help' in args && args.help) || ('h' in args && args.h)) {
         help()
     }
