@@ -1,0 +1,17 @@
+=============================================================================
+cd c:/iacon/pronfes && node ./dist/app.js --loader --period="2022/01-2022/12"
+cd c:/iacon/pronfes && node ./dist/app.js --work --period="2022/01-2022/12"
+=============================================================================
+cd c:/iacon/pronfes && node ./dist/app.js --loader --period="2023/01-2023/12"
+cd c:/iacon/pronfes && node ./dist/app.js --work --period="2023/01-2023/12"
+=============================================================================
+[
+  {
+    '$group': {
+      '_id': null, 
+      'distinctValues': {
+        '$addToSet': '$company'
+      }
+    }
+  }
+]
